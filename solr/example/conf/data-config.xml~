@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataConfig> 
+<dataSource name="mysql" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://127.0.0.1" user="root" password="sc00ter" batchSize="-1" /> 
+<document> 
+<entity name="products" dataSource="mysql" pk="id" 
+query="select
+
+products.id,
+replace(products.description,':', ' ') as description,
+products.pack_size,
+products.brand,
+
+replace(line.description,':', ' ') as ld,
+line.id as lpsid,
+
+products.category_id as category_id,
+products.class as class_id,
+products.subclass as subclass_id,
+
+products.nswr,
+products.vicr,
+products.qldr,
+products.sar,
+products.ntr,
+products.war,
+products.tasr
+
+from boston_devtest.skutags
+join boston_devtest.product_skutag on product_skutag.skutag_id = skutags.id
+join boston_devtest.products on product_skutag.product_id = products.id
+left join boston_devtest.line on products.line_id=line.id
+where skutags.tag in ('boston');"> 
+
+
+
+</entity> 
+</document> 
+</dataConfig>

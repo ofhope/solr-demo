@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<schema name="The Good Guys Tablet Search" version="1.0">
+
+    <types>
+
+        <fieldType name="string" class="solr.StrField" sortMissingLast="true" />
+
+        <fieldType name="textGeneral" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="false">
+            <analyzer type="index">
+                <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />
+                <filter class="solr.TrimFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.EnglishMinimalStemFilterFactory" />
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="15" side="front" />
+            </analyzer>
+            <analyzer type="query">
+                <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />
+                <filter class="solr.TrimFilterFactory"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.EnglishMinimalStemFilterFactory"/>
+            </analyzer>
+        </fieldType>
+
+        <!--
+            Phonetic matches via Metaphone algorithm
+            Assistance -> ASSTN
+            Assistants -> ASSTN
+        -->
+        <fieldtype name="textPhonetic" stored="false" indexed="true" class="solr.TextField">
+            <analyzer>
+                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <filter class="solr.DoubleMetaphoneFilterFactory" inject="false" />
+            </analyzer>
+        </fieldtype>
+
+        <!--
+            Made to search against but not to display
+            Will make heavy use of tokenising Case, Int Sting, Special Characters
+
+            "Wi-Fi" -> "Wi", "Fi"
+            "PowerShot" -> "Power", "Shot"
+            "SD500" -> "SD", "500"
+            "//hello-\-\-there, 'dude'" -> "hello", "there", "dude"
+            "O'Neil's" -> "O", "Neil"
+            "Super-Duper-XL500-42-AutoCoder!" -> 0:"Super", 1:"Duper", 2:"XL", 2:"SuperDuperXL", 3:"500" 4:"42", 5:"Auto", 6:"Coder", 7:"AutoCoder"
+        -->
+        <fieldType name="textTokenise" class="solr.TextField" positionIncrementGap="100" autoGeneratePhraseQueries="true">
+            <analyzer>
+                <tokenizer class="solr.StandardTokenizerFactory" />
+                <filter class="solr.WordDelimiterFilterFactory"
+                        splitOnCaseChange="1"
+                        splitOnNumerics="1"
+                        stemEnglishProgressive="1"
+                        generateWordParts="1"
+                        generateNumberParts="1"
+                        catenateWords="1"
+                        catenateNumbers="1"
+                        catenateAll="1"
+                        preserverOrigional="1" />
+                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="false"/>
+                <filter class="solr.LowerCaseFilterFactory"/>
+                <filter class="solr.TrimFilterFactory"/>
+                <filter class="solr.EdgeNGramFilterFactory" minGramSize="1" maxGramSize="15" side="front" />
+            </analyzer>
+        </fieldType>
+
+    </types>
+
+    <fields>
+        <!-- PK -->
+        <field name="id" type="string" indexed="true" stored="true" required="true" />
+        <!-- Standard Fields -->
+        <field name="title" type="textGeneral" indexed="true" stored="true" multiValued="false" />
+        <field name="body" type="textGeneral" indexed="true" stored="true" multiValued="false" />
+        <field name="bodyPhonetic" type="textPhonetic" indexed="true" stored="true" multiValued="false" />
+        <field name="bodyTokenize" type="textTokenise" indexed="true" stored="true" multiValued="false" />
+        <field name="all" type="text_general" indexed="true" stored="true" />
+    </fields>
+
+    <copyField source="body" dest="bodyPhonetic" />
+    <copyField source="body" dest="bodyTokenize" />
+
+    <uniqueKey>id</uniqueKey>
+
+</schema>

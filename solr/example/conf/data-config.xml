@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<dataConfig>
+    <dataSource name="mysql" driver="com.mysql.jdbc.Driver" url="jdbc:mysql://127.0.0.1" user="solr" password="password" batchSize="-1" />
+    <document>
+        <entity name="example" dataSource="mysql" pk="id" query="SELECT * FROM world.City;">
+        </entity>
+    </document>
+</dataConfig>
