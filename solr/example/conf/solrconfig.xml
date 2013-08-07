@@ -80,7 +80,7 @@
     <requestHandler name="/select" class="solr.SearchHandler">
         <lst name="defaults">
             <str name="defType">edismax</str>
-            <str name="qf">title^100 body^50 bodyPartial bodyPhonetic</str>
+            <str name="qf">Name^100 NamePhonetic^50 NameTokenize^50 CountryCode District Population</str>
             <str name="echoParams">explicit</str>
             <int name="rows">20</int>
             <str name="df">all</str>

@@ -33,6 +33,9 @@
         -->
         <fieldtype name="textPhonetic" stored="false" indexed="true" class="solr.TextField">
             <analyzer>
+                <charFilter class="solr.MappingCharFilterFactory" mapping="mapping-ISOLatin1Accent.txt"/>
+                <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true" />
+                <filter class="solr.TrimFilterFactory"/>
                 <tokenizer class="solr.StandardTokenizerFactory"/>
                 <filter class="solr.DoubleMetaphoneFilterFactory" inject="false" />
             </analyzer>
@@ -75,15 +78,17 @@
         <!-- PK -->
         <field name="id" type="string" indexed="true" stored="true" required="true" />
         <!-- Standard Fields -->
-        <field name="title" type="textGeneral" indexed="true" stored="true" multiValued="false" />
-        <field name="body" type="textGeneral" indexed="true" stored="true" multiValued="false" />
-        <field name="bodyPhonetic" type="textPhonetic" indexed="true" stored="true" multiValued="false" />
-        <field name="bodyTokenize" type="textTokenise" indexed="true" stored="true" multiValued="false" />
-        <field name="all" type="text_general" indexed="true" stored="true" />
+        <field name="Name" type="textGeneral" indexed="true" stored="true" multiValued="false" />
+        <field name="NamePhonetic" type="textPhonetic" indexed="true" stored="true" multiValued="false" />
+        <field name="NameTokenize" type="textTokenise" indexed="true" stored="true" multiValued="false" />
+
+        <field name="CountryCode" type="textGeneral" indexed="true" stored="true" multiValued="false" />
+        <field name="District" type="textGeneral" indexed="true" stored="true" multiValued="false" />
+        <field name="Population" type="textGeneral" indexed="true" stored="true" multiValued="false" />
     </fields>
 
-    <copyField source="body" dest="bodyPhonetic" />
-    <copyField source="body" dest="bodyTokenize" />
+    <copyField source="Name" dest="NamePhonetic" />
+    <copyField source="Name" dest="NameTokenize" />
 
     <uniqueKey>id</uniqueKey>
 

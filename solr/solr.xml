@@ -2,6 +2,6 @@
 
 <solr persistent="false" sharedLib="./solrlib">
     <cores adminPath="/admin/cores">
-        <core name="ttgg" instanceDir="ttgg" />
+        <core name="example" instanceDir="example" />
     </cores>
 </solr>
